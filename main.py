@@ -25,6 +25,7 @@ faked_gray_image = cv2.cvtColor(faked_image, cv2.COLOR_BGR2GRAY)
 fake_faces = face_classifier.detectMultiScale(faked_gray_image)
 for (fx, fy, fw, fh) in fake_faces:
     cv2.rectangle(faked_image, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 2)
+
 # Apply eye detection to the fake image to see wrong results
 fake_eyes = eye_classifier.detectMultiScale(faked_gray_image)
 for (ex, ey, ew, eh) in fake_eyes:
@@ -34,30 +35,27 @@ for (ex, ey, ew, eh) in fake_eyes:
 fake_nose = nose_classifier.detectMultiScale(faked_gray_image)
 for (nx, ny, nw, nh) in fake_nose:
     cv2.rectangle(faked_image, (nx, ny), (nx + nw, ny + nh), (255, 255, 255), 2)
-# ----------------------------------------------------------------
+# ---------------------------- Start -> Original Code -----------------------------------
 # Detect faces first
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 faces = face_classifier.detectMultiScale(gray_image)
-for (x, y, w, h) in faces:
-    # Draw a rectangle around the face int fake image
-    cv2.rectangle(faked_image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
+for (fx, fy, fw, fh) in faces:
     # Detect eyes and nose within the face region
-    face_space = gray_image[y:y + h, x:x + w]
+    face_space = gray_image[fy:fy + fh, fx:fx + fw]
     eyes = eye_classifier.detectMultiScale(face_space)
     nose = nose_classifier.detectMultiScale(face_space)
-
 
     # check if this face have eyes
     if len(eyes) > 0:
         # Draw a rectangle around the face
-        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        cv2.rectangle(image, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 2)
 
     # draw the rectangle around the eyes
     for (ex, ey, ew, eh) in eyes:
         # draw the rectangle around the nose
         for (nx, ny, nw, nh) in nose:
-            if (ny > ey):
-                cv2.rectangle(image, (x + ex, y + ey), (x + ex + ew, y + ey + eh), (0, 0, 255), 2)
+            if ny > ey:
+                cv2.rectangle(image, (fx + ex, fy + ey), (fx + ex + ew, fy + ey + eh), (0, 0, 255), 2)
                 # cv2.rectangle(image, (x + nx, y + ny), (x + nx + nw, y + ny + nh), (255, 0, 255), 2)
 
 
