@@ -16,14 +16,15 @@ if image.shape[0] > 500:
     ratio = float(width) / image.shape[1]
     height = int(image.shape[0] * ratio)
     image = cv2.resize(image, (width, height))
-# copy image
 
+# ------------------------Start -> Fake Code ----------------------------------------
 faked_image = np.copy(image)
-
-# Convert the image to grayscale
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 faked_gray_image = cv2.cvtColor(faked_image, cv2.COLOR_BGR2GRAY)
 
+# Apply face detection to the fake image to see wrong results
+fake_faces = face_classifier.detectMultiScale(faked_gray_image)
+for (fx, fy, fw, fh) in fake_faces:
+    cv2.rectangle(faked_image, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 2)
 # Apply eye detection to the fake image to see wrong results
 fake_eyes = eye_classifier.detectMultiScale(faked_gray_image)
 for (ex, ey, ew, eh) in fake_eyes:
